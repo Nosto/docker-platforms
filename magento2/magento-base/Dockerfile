@@ -52,7 +52,7 @@ RUN cd /var/www/html/magento2 && \
     cd /var/www/html/magento2/ && \
     # Create Symlinks
     php -f magento2-sample-data/dev/tools/build-sample-data.php -- --ce-source="$(pwd)" && \
-    chown -R www-data:www-data /var/wwwRUN   chown -R www-data:www-data /var/www
+    chown -R www-data:www-data /var/www
 
 RUN rm /root/.composer/auth.json
 
