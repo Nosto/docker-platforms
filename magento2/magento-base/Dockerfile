@@ -1,4 +1,4 @@
-FROM nosto/php-apache:7.2
+FROM nosto/php-apache:7.3
 
 MAINTAINER Cid Lopes "alannettto@gmail.com"
 
@@ -6,7 +6,7 @@ ADD config/auth.json /root/.composer/
 
 # Install Magento 2
 RUN cd /var/www/html && \
-    composer self-update && composer create-project --repository-url=https://repo.magento.com/ magento/project-community-edition=2.3.4 magento2 && \
+    composer self-update && composer create-project --repository-url=https://repo.magento.com/ magento/project-community-edition=2.4.0 magento2 && \
     cd magento2 && \
     find . -type d -exec chmod 770 {} \; && find . -type f -exec chmod 660 {} \; && chmod u+x bin/magento
 

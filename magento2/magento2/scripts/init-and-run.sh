@@ -12,7 +12,12 @@ if [ ! -f /var/www/html/magento2/.installed ]; then
     >&2 echo "MySQL is unavailable - sleeping"
     sleep 5
   done
-  pwd
+
+  until curl -i ${ES_HOST}:9200/_cluster/health; do
+    >&2 echo "ElasticSearch is unavailable - sleeping"
+    sleep 5
+  done
+
   bin/magento setup:install \
       --timezone "Europe/Helsinki" \
       --currency "EUR" \
@@ -35,7 +40,10 @@ if [ ! -f /var/www/html/magento2/.installed ]; then
       --amqp-port="5672" \
       --amqp-user="guest" \
       --amqp-password="guest" \
-      --amqp-virtualhost="/"
+      --amqp-virtualhost="/" \
+      --elasticsearch-host="${ES_HOST}" \
+      --elasticsearch-username="elastic" \
+      --elasticsearch-password="changeme"
   
   chmod +x bin/magento
   bin/magento deploy:mode:set developer
@@ -65,12 +73,12 @@ if [ ! -f /var/www/html/magento2/.installed ]; then
   bin/magento config:set catalog/productalert_cron/time "00,00,00" &
   bin/magento config:set catalog/price/scope "0" &
   bin/magento config:set catalog/search/enable_eav_indexer "1" &
-  bin/magento config:set catalog/search/engine "elasticsearch6" &
-  bin/magento config:set catalog/search/elasticsearch6_server_hostname "${ES_HOST}" &
-  bin/magento config:set catalog/search/elasticsearch6_server_port "9200" &
-  bin/magento config:set catalog/search/elasticsearch6_index_prefix "magento2" &
-  bin/magento config:set catalog/search/elasticsearch6_enable_auth "0" &
-  bin/magento config:set catalog/search/elasticsearch6_server_timeout "15" &
+  bin/magento config:set catalog/search/engine "elasticsearch7" &
+  bin/magento config:set catalog/search/elasticsearch7_server_hostname "${ES_HOST}" &
+  bin/magento config:set catalog/search/elasticsearch7_server_port "9200" &
+  bin/magento config:set catalog/search/elasticsearch7_index_prefix "magento2" &
+  bin/magento config:set catalog/search/elasticsearch7_enable_auth "0" &
+  bin/magento config:set catalog/search/elasticsearch7_server_timeout "15" &
   bin/magento config:set catalog/search/search_recommendations_enabled "1" &
   bin/magento config:set catalog/search/search_recommendations_count "5" &
   bin/magento config:set catalog/search/search_recommendations_count_results_enabled "0" &
