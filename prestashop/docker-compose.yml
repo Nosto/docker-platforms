@@ -2,33 +2,37 @@ version: '3.3'
 
 services:
   ################################################
-  ####          MariaDB Container         ######
+  ####          MariaDB Container          ######
   ##############################################
   db_ps:
     image: nosto/mariadb:10.0
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: prestashop
-    networks:
-      - backend
 
   ################################################
   ####        Prestashop Container         ######
   ##############################################
   prestashop:
+    hostname: prestashop
     build:
       context: ./
       dockerfile: ./Dockerfile
     links:
       - db_ps
-    ports:
-      - 80:80
-      # - 9002:9002 #XDebug
+    # ports:
+      # - 9002:9002  # Enable in order to use XDebug
     extra_hosts:
       my.dev.nos.to: 192.168.65.2
-    networks:
-      - web
-      - backend
+    labels:
+      #### Labels define the behavior and rules of the traefik proxy for this container ####
+      - "traefik.enable=true" # <== Enable traefik to proxy this container
+      - "traefik.http.routers.web-prestashop.rule=Host(`prestashop.dev.nos.to`)" # <== Your Domain Name goes here for the http rule
+      - "traefik.http.routers.web-prestashop.entrypoints=web" # <== Defining the entrypoint for http, **ref: line 30
+      # - "traefik.http.routers.nginx-web.middlewares=redirect@file" # <== This is a middleware to redirect to https
+      # - "traefik.http.routers.nginx-secured.rule=Host(`prestashop.dev.nos.to`)" # <== Your Domain Name for the https rule 
+      # - "traefik.http.routers.nginx-secured.entrypoints=web-secured" # <== Defining entrypoint for https, **ref: line 31
+      # - "traefik.http.routers.nginx-secured.tls.certresolver=mytlschallenge" # <== Defining certsresolvers for https
     volumes:
       - type: bind
         source: ./nosto-prestashop
@@ -51,7 +55,6 @@ services:
       PHP_IDE_CONFIG: serverName=prestashop.dev.nos.to # for XDebug
 
 networks:
-  web:
-    external: true
-  backend:
-    external: false
+  default:
+    external:
+      name: web
