@@ -91,6 +91,9 @@ if [ ! -f /var/www/html/magento2/.installed ]; then
 
   wait
 
+  # Disable 2FA
+  bin/magento module:disable Magento_TwoFactorAuth
+
   # Indexer configuration
   bin/magento indexer:set-mode schedule
 
