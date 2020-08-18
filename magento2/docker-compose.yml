@@ -43,8 +43,8 @@ services:
       - db_m2
       - rabbitmq_m2
       - es_m2
-    # ports:
-      # - 9002:9002 #XDebug
+    ports:
+      - 9002:9002 #XDebug
     extra_hosts:
       my.dev.nos.to: 192.168.65.2
     hostname: magento
@@ -80,7 +80,7 @@ services:
       MYSQL_PASSWORD: root
       MYSQL_DATABASE: magento2_db
       RABBITMQ_HOST: rabbitmq_m2
-      VIRTUAL_HOST: magento2.dev.nos.to
+      VIRTUAL_HOST: magento2.dev.nos.to:8081
       ES_HOST: es_m2
       ADMIN_USER: admin
       ADMIN_PASSWORD: Admin12345
@@ -91,7 +91,7 @@ services:
       NOSTO_WEB_HOOK_BASE_URL: https://my.dev.nos.to
       NOSTO_IFRAME_ORIGIN: https://my.dev.nos.to
       NOSTO_IFRAME_ORIGIN_REGEXP: .*
-      PHP_IDE_CONFIG: serverName=magento2.dev.nos.to
+      PHP_IDE_CONFIG: serverName=magento2.dev.nos.to:8081
 
 networks:
   default:
