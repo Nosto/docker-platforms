@@ -25,7 +25,7 @@ Before running this from this repository root:
 	git clone git@github.com:Nosto/nosto-magento2.git
 	docker-compose up -d
 ```
-[NOTE]: Magento should be available on `magento2.dev.nos.to` if traefik is running.
+[NOTE]: Magento should be available on `magento2.dev.nos.to:8081` if traefik is running.
 
 Admin credentials are:
 User: `admin`
@@ -37,8 +37,8 @@ Password:`Admin12345`
 	git clone git@github.com:Nosto/nosto-prestashop.git
 	docker-compose up -d
 ```
-[NOTE]: Prestashop should be available on `prestashop.dev.nos.to` if traefik is running.
+[NOTE]: Prestashop should be available on `prestashop.dev.nos.to:8081` if traefik is running.
 Admin credentials are:
 User: `admin@admin.com`
 Password:`Admin12345`
-Backend URL: `http://prestashop.dev.nos.to/adminn0st0`
+Backend URL: `http://prestashop.dev.nos.to:8081/adminn0st0`
