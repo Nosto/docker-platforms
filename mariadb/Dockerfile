@@ -1,4 +1,4 @@
-FROM mariadb:10.0
+FROM mariadb:10.2
 
 MAINTAINER Cid Lopes "cid@nosto.com"
 
