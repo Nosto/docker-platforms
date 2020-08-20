@@ -4,8 +4,6 @@ MAINTAINER Cid Lopes "alannettto@gmail.com"
 
 ENV PRESTASHOP_VERSION 1.7.6.7
 ENV PRESTASHOP_ARCHIVE prestashop_${PRESTASHOP_VERSION}
-ENV TERM xterm
-
 
 RUN cd / && wget https://github.com/PrestaShop/PrestaShop/releases/download/${PRESTASHOP_VERSION}/${PRESTASHOP_ARCHIVE}.zip && \
 	cd / && mkdir -m 755 -p /var/www/html/prestashop && \
