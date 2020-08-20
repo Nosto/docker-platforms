@@ -3,20 +3,32 @@
 # Turn on monitor mode, required by job control
 set -m
 
+until mysql -u"${MYSQL_USER}" -p"${MYSQL_PASSWORD}" -h"${MYSQL_HOST}"; do
+  >&2 echo "MySQL is unavailable - sleeping"
+  sleep 5
+done
+
+until curl -i ${ES_HOST}:9200/_cluster/health; do
+  >&2 echo "ElasticSearch is unavailable - sleeping"
+  sleep 5
+done
+
+TABLE_COUNT=$(mysql -u"${MYSQL_USER}" -p"${MYSQL_PASSWORD}" -h"${MYSQL_HOST}" -e"SELECT count(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = '${MYSQL_DATABASE}';" | grep -v "count")
+
+if [ "$TABLE_COUNT" -gt 0 ]; then
+    >&2 echo "Magento already installed to the DB"
+    
+else
+    >&2 echo "Re-installing Magento..."
+    if [ -f /var/www/html/magento2/.installed ]; then
+      rm /var/www/html/magento2/.installed
+    fi
+fi
+
 if [ ! -f /var/www/html/magento2/.installed ]; then
   cd /var/www/html/magento2/ || exit
   composer config --global repos.packagist composer https://packagist.org
   composer require nosto/php-sdk:@stable
-
-  until mysql -u"${MYSQL_USER}" -p"${MYSQL_PASSWORD}" -h"${MYSQL_HOST}"; do
-    >&2 echo "MySQL is unavailable - sleeping"
-    sleep 5
-  done
-
-  until curl -i ${ES_HOST}:9200/_cluster/health; do
-    >&2 echo "ElasticSearch is unavailable - sleeping"
-    sleep 5
-  done
 
   bin/magento setup:install \
       --timezone "Europe/Helsinki" \

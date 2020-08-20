@@ -5,11 +5,12 @@ services:
   ####          MariaDB Container          ######
   ##############################################
   db_m2:
-    image: nosto/mariadb:10.0
+    image: nosto/mariadb:10.2
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: magento2_db
-
+    volumes:
+      - mage-datavolume:/var/lib/mysql
   ################################################
   ####          RabbitMQ Container         ######
   ##############################################
@@ -30,7 +31,6 @@ services:
     image: elasticsearch:7.6.2
     environment:
       discovery.type: single-node
-
   
   ################################################
   ####        Magento 2 Container          ######
@@ -52,19 +52,16 @@ services:
       #### Labels define the behavior and rules of the traefik proxy for this container ####
       - "traefik.enable=true" # <== Enable traefik to proxy this container
       - "traefik.http.routers.web-magento.rule=Host(`magento2.dev.nos.to`)" # <== Your Domain Name goes here for the http rule
-      - "traefik.http.routers.web-magento.entrypoints=web" # <== Defining the entrypoint for http, **ref: line 30
-      # - "traefik.http.routers.nginx-web.middlewares=redirect@file" # <== This is a middleware to redirect to https
-      # - "traefik.http.routers.nginx-secured.rule=Host(`magento2.dev.nos.to`)" # <== Your Domain Name for the https rule 
-      # - "traefik.http.routers.nginx-secured.entrypoints=web-secured" # <== Defining entrypoint for https, **ref: line 31
-      # - "traefik.http.routers.nginx-secured.tls.certresolver=mytlschallenge" # <== Defining certsresolvers for https
+      - "traefik.http.routers.web-magento.entrypoints=web" # <== Defining the entrypoint for http
     volumes:
       - type: bind
         source: ./nosto-magento2
         target: /var/www/html/magento2/app/code/Nosto/Tagging
-      # - type: bind
-      #   source: ./magento-root
-      #   target: /var/www/html/magento2/ # For some reason, when you mount like this, it doesn't copy everything and fails the container building phase. Maybe using :delegate would fix it.
-      
+      # - type: volume
+      #   source: mage-rootfiles
+      #   target: /var/www/html/magento2/
+      #   volume:
+      #     nocopy: false
       # - type: bind
       #   source: ./nosto-magento2/vendor/magento
       #   target: /var/www/html/magento2/generated
@@ -97,3 +94,6 @@ networks:
   default:
     external:
       name: web
+volumes:
+  mage-datavolume:
+  # mage-rootfiles:
