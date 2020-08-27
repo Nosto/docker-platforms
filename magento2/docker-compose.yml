@@ -55,21 +55,14 @@ services:
       - "traefik.http.routers.web-magento.entrypoints=web" # <== Defining the entrypoint for http
     volumes:
       - type: bind
+        source: ./magento_root/magento2
+        target: /var/www/html/magento2/
+      - type: bind
         source: ./nosto-magento2
         target: /var/www/html/magento2/app/code/Nosto/Tagging
-      # - type: volume
-      #   source: mage-rootfiles
-      #   target: /var/www/html/magento2/
-      #   volume:
-      #     nocopy: false
       # - type: bind
-      #   source: ./nosto-magento2/vendor/magento
+      #   source: ./generated
       #   target: /var/www/html/magento2/generated
-      # Mage logs mounted to local. Not needed if we manage to mount the whole installation
-      # - type: bind
-      #   source: ./log
-      #   target: /var/www/html/magento2/var/log/
-
     environment:
       COMPOSER_AUTH: "{\"http-basic\":{\"repo.magento.com\":{\"username\":\"\",\"password\":\"\"}}}"
       MYSQL_HOST: db_m2
@@ -96,4 +89,3 @@ networks:
       name: web
 volumes:
   mage-datavolume:
-  # mage-rootfiles:
