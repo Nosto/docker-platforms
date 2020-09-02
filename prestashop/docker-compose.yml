@@ -1,0 +1,56 @@
+version: '3.3'
+
+services:
+  ################################################
+  ####          MariaDB Container          ######
+  ##############################################
+  db_ps:
+    image: nosto/mariadb:10.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: prestashop
+
+  ################################################
+  ####        Prestashop Container         ######
+  ##############################################
+  prestashop:
+    hostname: prestashop
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    links:
+      - db_ps
+    ports:
+      - 9003:9002  # Enable in order to use XDebug
+    extra_hosts:
+      my.dev.nos.to: 192.168.65.2
+    labels:
+      #### Labels define the behavior and rules of the traefik proxy for this container ####
+      - "traefik.enable=true" # <== Enable traefik to proxy this container
+      - "traefik.http.routers.web-prestashop.rule=Host(`prestashop.dev.nos.to`)" # <== Your Domain Name goes here for the http rule
+      - "traefik.http.routers.web-prestashop.entrypoints=web" # <== Defining the entrypoint for http
+    volumes:
+      - type: bind
+        source: ./nosto-prestashop
+        target: /var/www/html/prestashop/modules/nostotagging
+    environment:
+      MYSQL_HOST: db_ps
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+      MYSQL_DATABASE: prestashop
+      VIRTUAL_HOST: prestashop.dev.nos.to:8081
+      ADMIN_EMAIL: admin@admin.com
+      ADMIN_PASSWORD: Admin12345
+      # Use the env vars bellow to point to your local or staging play instance
+      NOSTO_SERVER_URL: connect.my.dev.nos.to
+      NOSTO_API_BASE_URL: http://host.docker.internal:9000/api
+      NOSTO_OAUTH_BASE_URL: https://my.dev.nos.to/oauth
+      NOSTO_WEB_HOOK_BASE_URL: https://my.dev.nos.to
+      NOSTO_IFRAME_ORIGIN: https://my.dev.nos.to
+      NOSTO_IFRAME_ORIGIN_REGEXP: .*
+      PHP_IDE_CONFIG: serverName=prestashop.dev.nos.to:8081 # for XDebug
+
+networks:
+  default:
+    external:
+      name: web
