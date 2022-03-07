@@ -70,6 +70,19 @@ services:
              composer "$$0" "$$@"
              ;;
         esac;
+  phan:
+    image: nosto/php-apache:7.2
+    volumes:
+      - type: bind
+        source: ./nosto-prestashop
+        target: /var/www/html/prestashop/modules/nostotagging
+    working_dir: /var/www/html/prestashop/modules/nostotagging
+    entrypoint:
+      - bash
+      - -e
+      - -c
+      - >
+        ./libs/bin/phan --config-file=phan.php --output-mode=checkstyle --output=chkphan.xml 
 networks:
   default:
     external:
