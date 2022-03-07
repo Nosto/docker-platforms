@@ -3,13 +3,13 @@ FROM nosto/php-apache:7.2
 MAINTAINER Cid Lopes "cid@nosto.com"
 
 RUN docker-php-ext-install zip
-RUN apt-get update || apt-get update && \
+RUN apt-get update --allow-releaseinfo-change || apt-get update --allow-releaseinfo-change && \
 	apt-get install -y -qq vim nano git
 
 # Download packages in parallel
 RUN composer global require hirak/prestissimo
 RUN cd /opt && git clone https://github.com/shopwareLabs/sw-cli-tools.git && \
-    cd sw-cli-tools && composer install
+    cd sw-cli-tools && git checkout tags/0.3.0 && composer install
 RUN cd /var/www/html && \
   	composer create-project shopware/composer-project --no-interaction --stability=dev shopware && \
   	composer require shopware/shopware:5.6.2 --update-with-dependencies
