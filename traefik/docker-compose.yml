@@ -6,11 +6,11 @@ services:
   ###############################################
   traefik:
     image: traefik:v2.2
-    restart: always
+    restart: unless-stopped
     container_name: traefik
     ports:
       - "8081:8081" # <== http
-      - "8080:8080" # <== :8080 is where the dashboard runs on
+      - "8082:8082" # <== :8080 is where the dashboard runs on
       # - "443:443" # <== https
     command:
     #### These are the CLI commands that will configure Traefik and tell it how to work! ####
@@ -24,10 +24,10 @@ services:
       - --providers.docker=true # <== Enabling docker as the provider for traefik
       - --providers.docker.exposedbydefault=false # <== Don't expose every container to traefik, only expose enabled ones
       - --providers.file.filename=/dynamic.yaml # <== Referring to a dynamic configuration file
-      - --providers.docker.network=web # <== Operate on the docker network named web
+      - --providers.docker.network=platforms # <== Operate on the docker network named platforms
       ## Entrypoints Settings - https://docs.traefik.io/routing/entrypoints/#configuration ##
-      - --entrypoints.web.address=:8081 # <== Defining an entrypoint for port :8081 named web
-      # - --entrypoints.web-secured.address=:443 # <== Defining an entrypoint for https on port :443 named web-secured
+      - --entrypoints.platforms.address=:8081 # <== Defining an entrypoint for port :8081 named platforms
+      # - --entrypoints.platforms-secured.address=:443 # <== Defining an entrypoint for https on port :443 named platforms-secured
       ## Certificate Settings (Let's Encrypt) -  https://docs.traefik.io/https/acme/#configuration-examples ##
       # - --certificatesresolvers.mytlschallenge.acme.tlschallenge=true # <== Enable TLS-ALPN-01 to generate and renew ACME certs
       # - --certificatesresolvers.mytlschallenge.acme.email=theafkdeveloper@gmail.com # <== Setting email for certs
@@ -37,14 +37,14 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock # <== Volume for docker admin
       # - ./dynamic.yaml:/dynamic.yaml # <== Volume for dynamic conf file, **ref: line 27
     networks:
-      - web # <== Placing traefik on the network named web, to access containers on this network
+      - platforms # <== Placing traefik on the network named platforms, to access containers on this network
     labels:
     #### Labels define the behavior and rules of the traefik proxy for this container ####
       - "traefik.enable=true" # <== Enable traefik on itself to view dashboard and assign subdomain to view it
-      - "traefik.docker.network=web"
+      - "traefik.docker.network=platforms"
       - "traefik.http.routers.api.rule=Host(`monitor.dev.nos.to`)" # <== Setting the domain for the dashboard
       - "traefik.http.routers.api.service=api@internal" # <== Enabling the api to be a service to access
 
 networks:
-  web:
+  platforms:
     external: true

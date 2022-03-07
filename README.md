@@ -4,7 +4,7 @@
 
 Create the default network that will be used by traefik
 ```bash
-docker network create web
+docker network create platforms
 ```
 ### 2 - Starting up Traefik
 

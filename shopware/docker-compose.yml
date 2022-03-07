@@ -27,8 +27,8 @@ services:
     labels:
       #### Labels define the behavior and rules of the traefik proxy for this container ####
       - "traefik.enable=true" # <== Enable traefik to proxy this container
-      - "traefik.http.routers.web-shopware.rule=Host(`shopware.dev.nos.to`)" # <== Your Domain Name goes here for the http rule
-      - "traefik.http.routers.web-shopware.entrypoints=web" # <== Defining the entrypoint for http
+      - "traefik.http.routers.platforms-shopware.rule=Host(`shopware.dev.nos.to`)" # <== Your Domain Name goes here for the http rule
+      - "traefik.http.routers.platforms-shopware.entrypoints=platforms" # <== Defining the entrypoint for http
     volumes:
       - type: bind
         source: ./nosto-shopware
@@ -53,4 +53,4 @@ services:
 networks:
   default:
     external:
-      name: web
+      name: platforms
