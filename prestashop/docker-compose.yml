@@ -50,7 +50,7 @@ services:
       NOSTO_IFRAME_ORIGIN_REGEXP: .*
       PHP_IDE_CONFIG: serverName=prestashop.dev.nos.to:8081 # for XDebug
 
-  composer:
+  composer: &composer
     image: nosto/php-apache:7.2
     volumes:
       - type: bind
@@ -82,7 +82,20 @@ services:
       - -e
       - -c
       - >
-        ./libs/bin/phan --config-file=phan.php --output-mode=checkstyle --output=chkphan.xml 
+        ./libs/bin/phan --config-file=phan.php --output-mode=checkstyle --output=chkphan.xml
+  phpmd:
+    image: nosto/php-apache:7.2
+    volumes:
+      - type: bind
+        source: ./nosto-prestashop
+        target: /var/www/html/prestashop/modules/nostotagging
+    working_dir: /var/www/html/prestashop/modules/nostotagging
+    entrypoint:
+      - bash
+      - -e
+      - -c
+      - >
+        ./libs/bin/phpmd . xml codesize,naming,unusedcode,controversial,design --exclude libs,var,build,tests,.phan --reportfile pmdphpmd.xml --ignore-violations-on-exit
 networks:
   default:
     external:
