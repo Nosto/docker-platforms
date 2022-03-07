@@ -5,6 +5,8 @@ if [ ! "$(ls -A nosto-shopware)" ]; then
     git clone git@github.com:Nosto/nosto-shopware.git
 fi
 
+docker build -t nosto/shopware:5.6.2 shopware-base --no-cache
+
 if [ ! "$(ls -A shopware_root)" ]; then
     mkdir shopware_root
     echo "Copying shopware root files to host storage for IDE completion, this will take a while..."
@@ -16,4 +18,4 @@ if [ ! "$(ls -A shopware_root)" ]; then
     docker rm -f shopware_root_code_gen
 fi
 
-docker-compose up --build
+docker-compose up --build -d
