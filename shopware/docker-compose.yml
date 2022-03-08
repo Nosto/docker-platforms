@@ -70,6 +70,47 @@ services:
              composer "$$0" "$$@"
              ;;
         esac;
+
+  phan:
+    image: nosto/php-apache:7.2
+    volumes:
+      - type: bind
+        source: ./nosto-shopware
+        target: /var/www/html/shopware/modules/nostotagging
+    working_dir: /var/www/html/shopware/modules/nostotagging
+    entrypoint:
+      - bash
+      - -e
+      - -c
+      - >
+        ./vendor/bin/phan --config-file=phan.php --output-mode=checkstyle --output=chkphan.xml --processes=4
+  phpmd:
+    image: nosto/php-apache:7.2
+    volumes:
+      - type: bind
+        source: ./nosto-shopware
+        target: /var/www/html/shopware/modules/nostotagging
+    working_dir: /var/www/html/shopware/modules/nostotagging
+    entrypoint:
+      - bash
+      - -e
+      - -c
+      - >
+        ./vendor/bin/phpmd . xml codesize,naming,unusedcode,controversial,design --exclude libs,var,build,tests,.phan --reportfile pmdphpmd.xml --ignore-violations-on-exit
+
+  phpcs:
+    image: nosto/php-apache:7.2
+    volumes:
+      - type: bind
+        source: ./nosto-shopware
+        target: /var/www/html/shopware/modules/nostotagging
+    working_dir: /var/www/html/shopware/modules/nostotagging
+    entrypoint:
+      - bash
+      - -e
+      - -c
+      - >
+        ./vendor/bin/phpcs --standard=ruleset.xml --severity=10 --report=checkstyle --report-file=chkphpcs.xml .
 networks:
   default:
     external:
