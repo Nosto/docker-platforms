@@ -1,6 +1,6 @@
 FROM nosto/php-apache:7.3
 
-MAINTAINER Cid Lopes "alannettto@gmail.com"
+MAINTAINER Cid Lopes "cid.lopes@nosto.com"
 
 ADD config/auth.json /root/.composer/
 
