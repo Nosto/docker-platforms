@@ -1,0 +1,77 @@
+version: '3.3'
+
+services:
+  composer:
+    image: nosto/php-apache:7.2
+    volumes:
+      - type: bind
+        source: ./nosto-php-sdk
+        target: /var/www/html/php-sdk
+    working_dir: /var/www/html/php-sdk
+    entrypoint:
+      - bash
+      - -e
+      - -c
+      - >
+        case $$0 in
+           install)
+             composer "$$0" --no-interaction "$$@";
+             ;;
+           *)
+             composer "$$0" "$$@"
+             ;;
+        esac;
+  phan:
+    image: nosto/php-apache:7.2
+    volumes:
+      - type: bind
+        source: ./nosto-php-sdk
+        target: /var/www/html/php-sdk
+    working_dir: /var/www/html/php-sdk
+    entrypoint:
+      - bash
+      - -e
+      - -c
+      - >
+        ./vendor/bin/phan --config-file=phan.php --output-mode=checkstyle --output=chkphan.xml --processes=4
+  phpmd:
+    image: nosto/php-apache:7.2
+    volumes:
+      - type: bind
+        source: ./nosto-php-sdk
+        target: /var/www/html/php-sdk
+    working_dir: /var/www/html/php-sdk
+    entrypoint:
+      - bash
+      - -e
+      - -c
+      - >
+        ./vendor/bin/phpmd . xml codesize,naming,unusedcode,controversial,design --exclude vendor,var,build,tests,.phan --reportfile pmdphpmd.xml --ignore-violations-on-exit
+
+  phpcs:
+    image: nosto/php-apache:7.2
+    volumes:
+      - type: bind
+        source: ./nosto-php-sdk
+        target: /var/www/html/php-sdk
+    working_dir: /var/www/html/php-sdk
+    entrypoint:
+      - bash
+      - -e
+      - -c
+      - >
+        ./vendor/bin/phpcs --standard=ruleset.xml --severity=10 --report=checkstyle --report-file=chkphpcs.xml .
+  tests:
+    image: nosto/php-apache:7.2
+    volumes:
+      - type: bind
+        source: ./nosto-php-sdk
+        target: /var/www/html/php-sdk
+    working_dir: /var/www/html/php-sdk
+    entrypoint:
+      - bash
+      - -e
+      - -c
+      - >
+        ./vendor/bin/codecept run --xml
+    
