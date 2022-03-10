@@ -33,7 +33,7 @@ services:
       - -e
       - -c
       - >
-        ./vendor/bin/phan --config-file=phan.php --output-mode=checkstyle --output=chkphan.xml --processes=4
+        ./vendor/bin/phan --config-file=phan.php --processes=4
   phpmd:
     image: nosto/php-apache:7.2
     volumes:
@@ -46,8 +46,7 @@ services:
       - -e
       - -c
       - >
-        ./vendor/bin/phpmd . xml codesize,naming,unusedcode,controversial,design --exclude vendor,var,build,tests,.phan --reportfile pmdphpmd.xml --ignore-violations-on-exit
-
+        ./vendor/bin/phpmd . xml codesize,naming,unusedcode,controversial,design --exclude vendor,var,build,tests,.phan --ignore-violations-on-exit
   phpcs:
     image: nosto/php-apache:7.2
     volumes:
@@ -60,7 +59,7 @@ services:
       - -e
       - -c
       - >
-        ./vendor/bin/phpcs --standard=ruleset.xml --severity=10 --report=checkstyle --report-file=chkphpcs.xml .
+        ./vendor/bin/phpcs --standard=ruleset.xml --severity=10 --report=checkstyle .
   tests:
     image: nosto/php-apache:7.2
     volumes:
