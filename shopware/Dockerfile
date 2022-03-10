@@ -1,6 +1,6 @@
 FROM nosto/php-apache:7.2 as nosto/shopware:5.6.2
 
-MAINTAINER Cid Lopes "cid@nosto.com"
+MAINTAINER Cid Lopes "cid.lopes@nosto.com"
 
 RUN docker-php-ext-install zip
 RUN apt-get update --allow-releaseinfo-change || apt-get update --allow-releaseinfo-change && \

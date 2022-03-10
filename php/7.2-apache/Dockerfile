@@ -1,6 +1,6 @@
 FROM php:7.2-apache
 
-MAINTAINER Cid Lopes "alannettto@gmail.com"
+MAINTAINER Cid Lopes "cid.lopes@nosto.com"
 
 ENV TERM=xterm
 ENV COMPOSER_ALLOW_SUPERUSER 1

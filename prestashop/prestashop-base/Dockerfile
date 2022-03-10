@@ -1,6 +1,6 @@
 FROM nosto/php-apache:7.2
 
-MAINTAINER Cid Lopes "alannettto@gmail.com"
+MAINTAINER Cid Lopes "cid.lopes@nosto.com"
 
 ENV PRESTASHOP_VERSION 1.7.6.7
 ENV PRESTASHOP_ARCHIVE prestashop_${PRESTASHOP_VERSION}
