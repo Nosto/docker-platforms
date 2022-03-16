@@ -16,4 +16,4 @@ if [ ! "$(ls -A prestashop_root)" ]; then
     docker rm -f prestashop_root_code_gen
 fi
 
-docker-compose up --build
+docker-compose up -d db_ps prestashop
