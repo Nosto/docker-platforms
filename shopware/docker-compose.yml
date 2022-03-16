@@ -5,7 +5,9 @@ services:
   ####          MariaDB Container          ######
   ##############################################
   db_sw:
-    image: nosto/mariadb:10.2
+    build:
+      context: ../mariadb
+      dockerfile: ./Dockerfile
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: shopware

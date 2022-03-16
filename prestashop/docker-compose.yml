@@ -5,7 +5,9 @@ services:
   ####          MariaDB Container          ######
   ##############################################
   db_ps:
-    image: nosto/mariadb:10.0
+    build:
+      context: ../mariadb
+      dockerfile: ./Dockerfile
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: prestashop

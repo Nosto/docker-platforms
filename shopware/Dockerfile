@@ -1,4 +1,4 @@
-FROM nosto/php-apache:7.2 as nosto/shopware:5.6.2
+FROM nosto/php-apache:7.2 as nosto-shopware
 
 MAINTAINER Cid Lopes "cid.lopes@nosto.com"
 
@@ -16,7 +16,7 @@ RUN cd /var/www/html && \
 
 RUN for config_file in $(find /etc/apache2 -type f -exec grep -l "DocumentRoot" {} \;) ; do  sed -i -e 's|DocumentRoot /var/www/html|DocumentRoot /var/www/html/shopware|' $config_file ; done
 
-FROM nosto/shopware:5.6.2
+FROM nosto-shopware
 
 ADD scripts/init-and-run.sh /usr/local/bin/init-and-run
 CMD ["init-and-run"]
