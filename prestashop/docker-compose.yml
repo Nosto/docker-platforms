@@ -84,7 +84,7 @@ services:
       - -e
       - -c
       - >
-        ./libs/bin/phan --config-file=phan.php --output-mode=checkstyle --output=chkphan.xml
+        ./libs/bin/phan --config-file=phan.php
   phpmd:
     image: nosto/php-apache:7.2
     volumes:
@@ -97,7 +97,7 @@ services:
       - -e
       - -c
       - >
-        ./libs/bin/phpmd . xml codesize,naming,unusedcode,controversial,design --exclude libs,var,build,tests,.phan --reportfile pmdphpmd.xml --ignore-violations-on-exit
+        ./libs/bin/phpmd . xml codesize,naming,unusedcode,controversial,design --exclude libs,var,build,tests,.phan --ignore-violations-on-exit
 
   phpcs:
     image: nosto/php-apache:7.2
@@ -111,7 +111,21 @@ services:
       - -e
       - -c
       - >
-        ./libs/bin/phpcs --standard=ruleset.xml --severity=10 --report=checkstyle --report-file=chkphpcs.xml .
+        ./libs/bin/phpcs --standard=ruleset.xml --severity=10 .
+  phing:
+    image: nosto/php-apache:7.2
+    volumes:
+      - type: bind
+        source: ./nosto-prestashop
+        target: /var/www/html/prestashop/modules/nostotagging
+    working_dir: /var/www/html/prestashop/modules/nostotagging
+    entrypoint:
+      - bash
+      - -e
+      - -c
+      - >
+        ./libs/bin/phing -verbose -Dversion="$$@" -DcomposerDir=/usr/local/bin/composer
+
 networks:
   default:
     external:
