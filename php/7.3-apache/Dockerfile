@@ -6,7 +6,7 @@ ENV TERM=xterm
 ENV COMPOSER_ALLOW_SUPERUSER 1
 
 RUN apt-get update && \
-    apt-get -y -qq install apt-transport-https locales jq unzip wget \
+    apt-get -y -qq install apt-transport-https locales jq zip unzip wget \
         libfreetype6-dev libjpeg-dev libpng-dev mariadb-client \
         libmcrypt-dev libzip-dev libxml2-dev libxslt1-dev libicu-dev \
         vim nano git wget gnupg cron sudo && \

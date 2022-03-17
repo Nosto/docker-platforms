@@ -124,7 +124,7 @@ services:
       - -e
       - -c
       - >
-        ./libs/bin/phing -verbose -Dversion="$$@" -DcomposerDir=/usr/local/bin/composer
+        ./libs/bin/phing -verbose -Dversion="$$@" -DcomposerDir=/root/.composer
 
 networks:
   default:
