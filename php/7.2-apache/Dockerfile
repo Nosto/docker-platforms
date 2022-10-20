@@ -31,8 +31,9 @@ RUN pecl install ast mcrypt-1.0.1 && \
     docker-php-ext-enable mcrypt && \
     php -r "readfile('https://getcomposer.org/installer');" > composer-setup.php && \
     php composer-setup.php --install-dir=/usr/local/bin --filename=composer && \
-    php -r "unlink('composer-setup.php');" && \
-    composer global require hirak/prestissimo
+    php -r "unlink('composer-setup.php');" 
+
+RUN echo 'www-data ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
 COPY conf/customphp.ini /usr/local/etc/php/conf.d/customphp.ini
 ADD scripts/xdebug.sh /usr/local/bin/xdebug
