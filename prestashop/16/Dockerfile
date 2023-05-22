@@ -1,0 +1,18 @@
+FROM nosto/php-apache:7.2
+
+MAINTAINER Cid Lopes "cid.lopes@nosto.com"
+
+ENV PRESTASHOP_VERSION 1.6.1.24
+ENV PRESTASHOP_ARCHIVE prestashop_${PRESTASHOP_VERSION}
+
+RUN cd / && wget https://github.com/PrestaShop/PrestaShop/releases/download/${PRESTASHOP_VERSION}/${PRESTASHOP_ARCHIVE}.zip && \
+	mkdir -m 755 -p /var/www/html/prestashop && \
+	unzip ${PRESTASHOP_ARCHIVE} -d /var/www/html/prestashop/ && \
+	chown -R www-data:www-data /var/www/html/prestashop && \
+    rm -rf /${PRESTASHOP_ARCHIVE}.zip \
+    rm -rf /var/www/html/prestashopwrap
+
+RUN for config_file in $(find /etc/apache2 -type f -exec grep -l "DocumentRoot" {} \;) ; do  sed -i -e 's|DocumentRoot /var/www/html|DocumentRoot /var/www/html/prestashop|' $config_file ; done
+
+ADD scripts/init-and-run.sh /usr/local/bin/init-and-run
+CMD ["init-and-run"]
