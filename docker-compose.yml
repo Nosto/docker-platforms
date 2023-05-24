@@ -111,11 +111,7 @@ services:
     extra_hosts:
       - "my.dev.nos.to:192.168.65.2"
     labels:
-      # - "traefik.enable=true"
-      # - "traefik.http.routers.platforms-prestashop.rule=Host(`prestashop.dev.nos.to`)"
-      # - "traefik.http.routers.platforms-prestashop.entrypoints=platforms"
       - "traefik.enable=true"
-      # - "traefik.http.routers.platforms-prestashop.rule=Host(`prestashop.dev.nos.to`)"
       - "traefik.http.routers.prestashop.rule=Host(`prestashop.dev.nos.to`)"
       - "traefik.http.routers.prestashop.entrypoints=platforms"
       - "traefik.http.services.prestashop.loadbalancer.server.port=80"
@@ -140,38 +136,76 @@ services:
       NOSTO_IFRAME_ORIGIN_REGEXP: .*
       PHP_IDE_CONFIG: serverName=prestashop.dev.nos.to:8081 # for XDebug
 
-  # prestashop16:
-  #   hostname: prestashop16
-  #   build:
-  #     context: ./prestashop/16
-  #     dockerfile: Dockerfile
-  #   links:
-  #     - mariadb
-  #   extra_hosts:
-  #     - "my.dev.nos.to:192.168.65.2"
-  #   labels:
-  #     - "traefik.enable=true"
-  #     - "traefik.http.routers.platforms-prestashop.rule=Host(`prestashop16.dev.nos.to`)"
-  #     - "traefik.http.routers.platforms-prestashop.entrypoints=platforms"
-  #   volumes:
-  #     - type: bind
-  #       source: ./prestashop/nosto-prestashop
-  #       target: /var/www/html/prestashop/modules/nostotagging
-  #   environment:
-  #     MYSQL_HOST: mariadb
-  #     MYSQL_USER: root
-  #     MYSQL_PASSWORD: root
-  #     MYSQL_DATABASE: prestashop16
-  #     VIRTUAL_HOST: prestashop16.dev.nos.to:8081
-  #     ADMIN_EMAIL: admin@admin.com
-  #     ADMIN_PASSWORD: Admin12345
-  #     # Use the env vars bellow to point to your local or staging play instance
-  #     NOSTO_SERVER_URL: connect.my.dev.nos.to
-  #     NOSTO_API_BASE_URL: http://host.docker.internal:9000/api
-  #     NOSTO_OAUTH_BASE_URL: https://my.dev.nos.to/oauth
-  #     NOSTO_WEB_HOOK_BASE_URL: https://my.dev.nos.to
-  #     NOSTO_IFRAME_ORIGIN: https://my.dev.nos.to
-  #     NOSTO_IFRAME_ORIGIN_REGEXP: .*
+#  prestashop16:
+#     hostname: prestashop16
+#     build:
+#       context: ./prestashop/16
+#       dockerfile: Dockerfile
+#     links:
+#       - mariadb
+#     extra_hosts:
+#       - "my.dev.nos.to:192.168.65.2"
+#     labels:
+#       - "traefik.enable=true"
+#       - "traefik.http.routers.prestashop16.rule=Host(`prestashop16.dev.nos.to`)"
+#       - "traefik.http.routers.prestashop16.entrypoints=platforms"
+#       - "traefik.http.services.prestashop16.loadbalancer.server.port=80"
+#     volumes:
+#       - type: bind
+#         source: ./prestashop/nosto-prestashop
+#         target: /var/www/html/prestashop/modules/nostotagging
+#     environment:
+#       MYSQL_HOST: mariadb
+#       MYSQL_USER: root
+#       MYSQL_PASSWORD: root
+#       MYSQL_DATABASE: prestashop16
+#       VIRTUAL_HOST: prestashop16.dev.nos.to:8081
+#       ADMIN_EMAIL: admin@admin.com
+#       ADMIN_PASSWORD: Admin12345
+#       # Use the env vars bellow to point to your local or staging play instance
+#       NOSTO_SERVER_URL: connect.my.dev.nos.to
+#       NOSTO_API_BASE_URL: http://host.docker.internal:9000/api
+#       NOSTO_OAUTH_BASE_URL: https://my.dev.nos.to/oauth
+#       NOSTO_WEB_HOOK_BASE_URL: https://my.dev.nos.to
+#       NOSTO_IFRAME_ORIGIN: https://my.dev.nos.to
+#       NOSTO_IFRAME_ORIGIN_REGEXP: .*
+
+  shopware:
+    hostname: shopware
+    build:
+      context: ./shopware
+      dockerfile: ./Dockerfile
+    links:
+      - mariadb
+    ports:
+      - 9004:9002  # Enable in order to use XDebug
+    extra_hosts:
+      - "my.dev.nos.to:192.168.65.2"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.shopware.rule=Host(`shopware.dev.nos.to`)"
+      - "traefik.http.routers.shopware.entrypoints=platforms"
+      - "traefik.http.services.shopware.loadbalancer.server.port=80"
+    volumes:
+      - type: bind
+        source: ./shopware/nosto-shopware
+        target: /var/www/html/shopware/Plugins/Community/Frontend/NostoTagging
+    environment:
+      MYSQL_HOST: mariadb
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+      MYSQL_DATABASE: shopware
+      VIRTUAL_HOST: shopware.dev.nos.to:8081
+      ADMIN_USER: admin
+      ADMIN_PASSWORD: Admin12345
+      # Use the env vars bellow to point to your local or staging play instance
+      NOSTO_SERVER_URL: connect.my.dev.nos.to
+      NOSTO_API_BASE_URL: http://host.docker.internal:9000/api
+      NOSTO_OAUTH_BASE_URL: https://my.dev.nos.to/oauth
+      NOSTO_WEB_HOOK_BASE_URL: https://my.dev.nos.to
+      NOSTO_IFRAME_ORIGIN: https://my.dev.nos.to
+      NOSTO_IFRAME_ORIGIN_REGEXP: .*
+      PHP_IDE_CONFIG: serverName=shopware.dev.nos.to:8081 # for XDebug
 
 networks:
   platforms:
