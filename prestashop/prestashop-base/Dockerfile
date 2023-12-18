@@ -2,7 +2,7 @@ FROM nosto/php-apache:7.2
 
 MAINTAINER Cid Lopes "cid.lopes@nosto.com"
 
-ENV PRESTASHOP_VERSION 1.7.6.7
+ENV PRESTASHOP_VERSION 1.7.8.10
 ENV PRESTASHOP_ARCHIVE prestashop_${PRESTASHOP_VERSION}
 
 RUN cd / && wget https://github.com/PrestaShop/PrestaShop/releases/download/${PRESTASHOP_VERSION}/${PRESTASHOP_ARCHIVE}.zip && \
