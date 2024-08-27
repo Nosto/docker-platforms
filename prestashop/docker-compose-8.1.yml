@@ -1,0 +1,79 @@
+services:
+    prestashop8:
+      image: prestashop/prestashop:8.1.7
+      links:
+       - presta8-mysql
+      depends_on:
+        - presta8-mysql
+      ports:
+       - 8089:80
+      hostname: prestashop8
+      domainname: dev.nos.to:8089
+      platform: linux/x86_64
+      volumes:
+        - type: bind
+          source: ./nosto-prestashop
+          target: /var/www/html/modules/nostotagging
+#        - type: bind
+#          source: ./prestashop8_root
+#          target: /tmp/prestashop8_root
+      environment:
+        ADMIN_MAIL: admin@admin.com
+        ADMIN_PASSWORD: Admin12345
+        ADMIN_PASSWD: Admin12345
+        VIRTUAL_HOST: prestashop8.dev.nos.to:8089
+        MYSQL_ENV_MYSQL_DATABASE: prestashop8
+        MYSQL_ENV_MYSQL_USER: root
+        MYSQL_ENV_MYSQL_PASSWORD: root
+        USE_SSL: false
+        PS_ENABLE_SSL: false
+        PS_DOMAIN: prestashop8.dev.nos.to:8089
+        DB_SERVER: presta8-mysql
+        DB_NAME: prestashop8
+        DB_PASSWD: root
+        DB_USER: root
+        PS_FOLDER_ADMIN: adminn0st0
+        PS_FOLDER_INSTALL: install4577
+        PHP_IDE_CONFIG: serverName=prestashop8.dev.nos.to:8089 # for XDebug
+        ################################################################
+        PS_INSTALL_AUTO: 1
+
+        # Use the env vars bellow to point to your local or staging play instance
+        NOSTO_SERVER_URL: connect.my.dev.nos.to
+        NOSTO_API_BASE_URL: http://host.docker.internal:9000/api
+        NOSTO_OAUTH_BASE_URL: https://my.dev.nos.to/oauth
+        NOSTO_WEB_HOOK_BASE_URL: https://my.dev.nos.to
+        NOSTO_IFRAME_ORIGIN: https://my.dev.nos.to
+        NOSTO_IFRAME_ORIGIN_REGEXP: .*
+
+      extra_hosts:
+        my.dev.nos.to: 192.168.65.2
+
+    presta8-mysql:
+      image: mariadb:11
+      ports:
+        - 3309:3306
+      environment:
+        MYSQL_ROOT_PASSWORD: root
+        MYSQL_DATABASE: prestashop8
+
+    composer: &composer
+      image: nosto/php-apache:8.2
+      volumes:
+        - type: bind
+          source: ./nosto-prestashop
+          target: /var/www/html/prestashop/modules/nostotagging
+      working_dir: /var/www/html/prestashop/modules/nostotagging
+      entrypoint:
+        - bash
+        - -e
+        - -c
+        - >
+          case $$0 in
+             install)
+               composer "$$0" --no-interaction "$$@";
+               ;;
+             *)
+               composer "$$0" "$$@"
+               ;;
+          esac;
