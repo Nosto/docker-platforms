@@ -9,8 +9,12 @@ if [ ! -f /var/www/html/shopware/.installed ]; then
 
   # Setup variables to populate the .env file
   cp .env.example .env
-  
-  sed -i -e 's*SHOP_URL=https://composer.test/path*SHOP_URL=http://'${VIRTUAL_HOST}'*g' .env
+  if [ "$USE_SSL" == "true" ] ; then
+      echo "SetEnvIf X-Forwarded-Proto https HTTPS=on" >> /var/www/html/shopware/.htaccess
+      sed -i -e 's*SHOP_URL=https://composer.test/path*SHOP_URL=https://'${VIRTUAL_HOST}'*g' .env
+    else
+      sed -i -e 's*SHOP_URL=https://composer.test/path*SHOP_URL=http://'${VIRTUAL_HOST}'*g' .env
+  fi
   sed -i -e 's*ADMIN_EMAIL=admin@example.com*ADMIN_EMAIL=devnull@example.com*g' .env
   sed -i -e 's*ADMIN_NAME="Demo User"*ADMIN_NAME="Admin"*g' .env
   sed -i -e 's*ADMIN_USERNAME=demo*ADMIN_USERNAME='${ADMIN_USER}'*g' .env
