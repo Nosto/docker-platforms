@@ -1,12 +1,11 @@
 #!/bin/bash -x
 
+until mysql -u"${MYSQL_USER}" -p"${MYSQL_PASSWORD}" -h"${MYSQL_HOST}"; do
+  >&2 echo "MySQL is unavailable - sleeping"
+  sleep 5
+done
+
 if [ ! -f /var/www/html/prestashop/.installed ]; then
-  
-  until mysql -u"${MYSQL_USER}" -p"${MYSQL_PASSWORD}" -h"${MYSQL_HOST}"; do
-    >&2 echo "MySQL is unavailable - sleeping"
-    sleep 5
-  done
-  
   cd /var/www/html/prestashop/install
 
   php index_cli.php \
@@ -39,9 +38,8 @@ if [ ! -f /var/www/html/prestashop/.installed ]; then
 
   bin/console doctrine:query:sql 'UPDATE ps_configuration SET value = 2 WHERE name = "PS_MAIL_METHOD"'
 
-  chown -R www-data:www-data /var/www/html/prestashop
-
   touch .installed
+  chown -R www-data:www-data /var/www/html/prestashop
 fi
 
 apache2-foreground
