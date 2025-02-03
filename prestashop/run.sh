@@ -1,13 +1,11 @@
 #!/bin/bash
 
-# Check if repo is clonned
+# Check if repo is cloned
 if [ ! "$(ls -A nosto-prestashop)" ]; then
     git clone git@github.com:Nosto/nosto-prestashop.git
 fi
 
-cd prestashop-base
-docker build -t nosto/prestashop-base:1.7.8.10 .
-cd ..
+docker build -t nosto-prestashop-base:1.7.8.10 prestashop-base
 docker-compose build
 
 if [ ! "$(ls -A prestashop_root)" ]; then
@@ -22,9 +20,6 @@ if [ ! "$(ls -A prestashop_root)" ]; then
 fi
 
 docker-compose up -d db_ps prestashop
-
-
-
 docker exec -i \
         --volume=$(pwd)/prestashop8_root:/var/www/html/prestashop_copy \
         prestashop-prestashop8-1 bash -c "cp -r /var/www/html/ /var/www/html/prestashop_copy"

@@ -47,7 +47,7 @@ services:
         NOSTO_IFRAME_ORIGIN_REGEXP: .*
 
       extra_hosts:
-        my.dev.nos.to: 192.168.65.2
+        - "my.dev.nos.to:192.168.65.254"
 
     presta8-mysql:
       image: mariadb:11
