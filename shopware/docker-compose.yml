@@ -8,6 +8,8 @@ services:
     build:
       context: ../mariadb
       dockerfile: ./Dockerfile
+#    ports:
+#      - 3309:3306
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: shopware
@@ -24,8 +26,9 @@ services:
       - db_sw
     ports:
       - 9004:9002  # Enable in order to use XDebug
+      - 8081:80
     extra_hosts:
-      my.dev.nos.to: 192.168.65.2
+      - my.dev.nos.to:192.168.65.254
     labels:
       #### Labels define the behavior and rules of the traefik proxy for this container ####
       - "traefik.enable=true" # <== Enable traefik to proxy this container
@@ -53,7 +56,7 @@ services:
       PHP_IDE_CONFIG: serverName=shopware.dev.nos.to:8081 # for XDebug
   
   composer:
-    image: nosto/php-apache:7.2
+    image: nosto/php-apache:7.4
     volumes:
       - type: bind
         source: ./nosto-shopware
@@ -74,7 +77,7 @@ services:
         esac;
 
   phan:
-    image: nosto/php-apache:7.2
+    image: nosto/php-apache:7.4
     volumes:
       - type: bind
         source: ./nosto-shopware
@@ -85,9 +88,10 @@ services:
       - -e
       - -c
       - >
-        ./vendor/bin/phan --config-file=phan.php --output-mode=checkstyle --output=chkphan.xml --processes=4
+        ./vendor/bin/phan --config-file=phan.php --processes=4
+#        ./vendor/bin/phan --config-file=phan.php --output-mode=checkstyle --output=chkphan.xml --processes=4
   phpmd:
-    image: nosto/php-apache:7.2
+    image: nosto/php-apache:7.4
     volumes:
       - type: bind
         source: ./nosto-shopware
@@ -99,9 +103,8 @@ services:
       - -c
       - >
         ./vendor/bin/phpmd . xml codesize,naming,unusedcode,controversial,design --exclude libs,var,build,tests,.phan --reportfile pmdphpmd.xml --ignore-violations-on-exit
-
-  phpcs:
-    image: nosto/php-apache:7.2
+  phing:
+    image: nosto/php-apache:7.4
     volumes:
       - type: bind
         source: ./nosto-shopware
@@ -112,8 +115,18 @@ services:
       - -e
       - -c
       - >
-        ./vendor/bin/phpcs --standard=ruleset.xml --severity=10 --report=checkstyle --report-file=chkphpcs.xml .
-networks:
-  default:
-    external:
-      name: platforms
+        composer install && ./vendor/bin/phing -verbose -Dversion="$$0" -DcomposerDir=/root/.composer
+  phpcs:
+    image: nosto/php-apache:7.4
+    volumes:
+      - type: bind
+        source: ./nosto-shopware
+        target: /var/www/html/shopware/modules/nostotagging
+    working_dir: /var/www/html/shopware/modules/nostotagging
+    entrypoint:
+      - bash
+      - -e
+      - -c
+      - >
+        ./vendor/bin/phpcs --standard=ruleset.xml --severity=10 .
+#        ./vendor/bin/phpcs --standard=ruleset.xml --severity=10 --report=checkstyle --report-file=chkphpcs.xml .
