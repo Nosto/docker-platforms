@@ -77,6 +77,11 @@ services:
       - mariadb_data_platforms:/var/lib/mysql
     depends_on:
       - traefik
+#    healthcheck:
+#      test: /healthcheck.sh
+#      interval: 2s
+#      timeout: 2s
+#      retries: 60
   prestashop:
     hostname: prestashop
     image: nosto-prestashop:1.7.8.10
@@ -116,6 +121,91 @@ services:
       PHP_IDE_CONFIG: serverName=prestashop.dev.nos.to:8081 # for XDebug
     depends_on:
       - traefik
+  composer_sw:
+    image: nosto/php-apache:7.4
+    volumes:
+      - type: bind
+        source: ./shopware/nosto-shopware
+        target: /var/www/html/shopware/Plugins/Community/Frontend/NostoTagging
+    working_dir: /var/www/html/shopware/Plugins/Community/Frontend/NostoTagging
+    depends_on:
+      - shopware
+    entrypoint:
+      - bash
+      - -e
+      - -c
+      - >
+        case $$0 in
+           install)
+             composer "$$0" --no-interaction "$$@";
+             ;;
+           *)
+             composer "$$0" "$$@"
+             ;;
+        esac;
+
+  phan_sw:
+    image: nosto/php-apache:7.4
+    volumes:
+      - type: bind
+        source: ./shopware/nosto-shopware
+        target: /var/www/html/shopware/modules/nostotagging
+    working_dir: /var/www/html/shopware/modules/nostotagging
+    depends_on:
+      - shopware
+    entrypoint:
+      - bash
+      - -e
+      - -c
+      - >
+        ./vendor/bin/phan --config-file=phan.php --output-mode=checkstyle --output=chkphan.xml --processes=4
+  phpmd_sw:
+    image: nosto/php-apache:7.4
+    volumes:
+      - type: bind
+        source: ./shopware/nosto-shopware
+        target: /var/www/html/shopware/modules/nostotagging
+    working_dir: /var/www/html/shopware/modules/nostotagging
+    depends_on:
+      - shopware
+    entrypoint:
+      - bash
+      - -e
+      - -c
+      - >
+        ./vendor/bin/phpmd . xml codesize,naming,unusedcode,controversial,design --exclude libs,var,build,tests,.phan --reportfile pmdphpmd.xml --ignore-violations-on-exit
+
+  phpcs_sw:
+    image: nosto/php-apache:7.4
+    volumes:
+      - type: bind
+        source: ./shopware/nosto-shopware
+        target: /var/www/html/shopware/modules/nostotagging
+    working_dir: /var/www/html/shopware/modules/nostotagging
+    depends_on:
+      - shopware
+    entrypoint:
+      - bash
+      - -e
+      - -c
+      - >
+        ./vendor/bin/phpcs --standard=ruleset.xml --severity=10 --report=checkstyle --report-file=chkphpcs.xml .
+
+  platforms:
+    image: debian:stretch-slim
+    depends_on:
+      prestashop:
+        condition: service_started
+      shopware:
+        condition: service_started
+      traefik:
+        condition: service_started
+      mariadb:
+        condition: service_started
+    entrypoint:
+      - /bin/true
+
+#        condition: service_healthy
 volumes:
   mariadb_data_platforms:
 networks:
