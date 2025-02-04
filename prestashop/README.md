@@ -27,7 +27,12 @@ To run the code quality tools, you can run the following commands:
 ```
 They are defined at `docker-compose.yml`, uncomment when needed, or they'll run by default when you don't pass args to `docker composer up`.
 
-### 3 - Pointing to local playcart instance
+### 3 - IDE completion:
+If you're using IDEA, you can set the `prestashop_root` as a source root to get code completion.
+Just right click on prestashop_root (and/or prestashop8_root) and select `Mark Directory as` -> `Sources Root`
+![img_1.png](img_1.png)
+![img.png](img.png)
+### 4 - Pointing to local playcart instance
 On the `docker-compose.yml`, you can set your local playcart environment.
 If you choose to run on a different domain, you can update the following env vars:
 ```
@@ -40,7 +45,7 @@ NOSTO_IFRAME_ORIGIN_REGEXP
 ```
 Leaving those empty will point to production by default.
 
-### 4 - Running Prestashop 8
+### 5 - Running Prestashop 8
 There is a specific compose file for it:
 ```bash
     docker-compose -f docker-compose-8.1.yml up -d
@@ -48,7 +53,7 @@ There is a specific compose file for it:
 
 The domain is set to `http://prestashop8.dev.nos.to:8089`
 
-### 5 - Accessing UI
+### 6 - Accessing UI
 
 [NOTE]: Prestashop should be available on `prestashop.dev.nos.to:8081`
 Admin credentials are:
