@@ -1,5 +1,3 @@
-version: '3.3'
-
 services:
   ################################################
   ####          MariaDB Container          ######
@@ -29,11 +27,6 @@ services:
       - 8081:80
     extra_hosts:
       - my.dev.nos.to:192.168.65.254
-    labels:
-      #### Labels define the behavior and rules of the traefik proxy for this container ####
-      - "traefik.enable=true" # <== Enable traefik to proxy this container
-      - "traefik.http.routers.platforms-shopware.rule=Host(`shopware.dev.nos.to`)" # <== Your Domain Name goes here for the http rule
-      - "traefik.http.routers.platforms-shopware.entrypoints=platforms" # <== Defining the entrypoint for http
     volumes:
       - type: bind
         source: ./nosto-shopware
@@ -89,7 +82,6 @@ services:
       - -c
       - >
         ./vendor/bin/phan --config-file=phan.php --processes=4
-#        ./vendor/bin/phan --config-file=phan.php --output-mode=checkstyle --output=chkphan.xml --processes=4
   phpmd:
     image: nosto/php-apache:7.4
     volumes:
@@ -129,4 +121,3 @@ services:
       - -c
       - >
         ./vendor/bin/phpcs --standard=ruleset.xml --severity=10 .
-#        ./vendor/bin/phpcs --standard=ruleset.xml --severity=10 --report=checkstyle --report-file=chkphpcs.xml .
