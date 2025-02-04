@@ -20,6 +20,3 @@ if [ ! "$(ls -A prestashop_root)" ]; then
 fi
 
 docker-compose up -d db_ps prestashop
-docker exec -i \
-        --volume=$(pwd)/prestashop8_root:/var/www/html/prestashop_copy \
-        prestashop-prestashop8-1 bash -c "cp -r /var/www/html/ /var/www/html/prestashop_copy"

@@ -1,4 +1,3 @@
-#FROM nosto-prestashop-base:1.7.8.10
 FROM nosto/php-apache:7.2
 
 MAINTAINER Cid Lopes "cid.lopes@nosto.com"
