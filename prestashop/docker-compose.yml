@@ -28,11 +28,6 @@ services:
       # - 9003:9002  # Enable in order to use XDebug
     extra_hosts:
       - "my.dev.nos.to:192.168.65.254"
-    labels:
-      #### Labels define the behavior and rules of the traefik proxy for this container ####
-      - "traefik.enable=true" # <== Enable traefik to proxy this container
-      - "traefik.http.routers.platforms-prestashop.rule=Host(`prestashop.dev.nos.to`)" # <== Your Domain Name goes here for the http rule
-      - "traefik.http.routers.platforms-prestashop.entrypoints=platforms" # <== Defining the entrypoint for http
     volumes:
       - type: bind
         source: ./nosto-prestashop
